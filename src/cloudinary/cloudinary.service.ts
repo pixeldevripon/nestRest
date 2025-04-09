@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as toStream from 'buffer-to-stream';
-import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
+import { v2 as cloudinary } from 'cloudinary';
 @Injectable()
 export class CloudinaryService {
   constructor(config: ConfigService) {
@@ -12,9 +12,11 @@ export class CloudinaryService {
     });
   }
 
-  async uploadFileToCloudinary(
-    file: Express.Multer.File,
-  ): Promise<UploadApiResponse> {
+  async uploadFileToCloudinary(file: Express.Multer.File) {
+    if (!file) {
+      return null;
+    }
+
     return new Promise((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
         { folder: 'hotels' },
@@ -44,7 +46,7 @@ export class CloudinaryService {
         return reject(new Error('Uploaded file is not a valid buffer.'));
       }
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-      toStream(file.buffer).pipe(uploadStream);
+      toStream(file?.buffer).pipe(uploadStream);
     });
   }
 }

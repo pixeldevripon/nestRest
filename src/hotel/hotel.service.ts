@@ -17,7 +17,7 @@ export class HotelService {
     // return the created hotel
     return {
       message: 'Hotel created successfully',
-      hotel,
+      data: { ...hotel },
     };
   }
 

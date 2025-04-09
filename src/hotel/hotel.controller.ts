@@ -41,9 +41,12 @@ export class HotelController {
     @Body() dto: hotelDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    const upoadedImageLink =
+    const upoadedImageLink: any =
       await this.cloudinaryService.uploadFileToCloudinary(file);
-    return this.hotelService.createHotel(dto, upoadedImageLink.secure_url);
+    return this.hotelService.createHotel(
+      dto,
+      upoadedImageLink?.secure_url ?? '',
+    );
   }
 
   // GET all hotels

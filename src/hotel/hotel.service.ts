@@ -8,10 +8,10 @@ export class HotelService {
   constructor(private prisma: PrismaService) {}
 
   // ----------Method to create a new hotel-----------------
-  async createHotel(dto: hotelDto) {
+  async createHotel(dto: hotelDto, upoadedImageLink: string) {
     // save the hotel in the database
     const hotel = await this.prisma.hotel.create({
-      data: { ...dto },
+      data: { ...dto, image: upoadedImageLink },
     });
 
     // return the created hotel

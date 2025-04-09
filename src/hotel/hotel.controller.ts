@@ -6,18 +6,44 @@ import {
   Param,
   Patch,
   Post,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { memoryStorage } from 'multer';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { hotelDto } from './dto';
 import { HotelService } from './hotel.service';
 
 @Controller('api/hotel')
 export class HotelController {
-  constructor(private hotelService: HotelService) {}
+  constructor(
+    private hotelService: HotelService,
+    private cloudinaryService: CloudinaryService,
+  ) {}
 
   // create a new hotel
   @Post()
-  createHotel(@Body() dto: hotelDto) {
-    return this.hotelService.createHotel(dto);
+  @UseInterceptors(
+    FileInterceptor('image', {
+      /*   storage: diskStorage({
+        destination: './uploads/hotels', // uploaded destination
+        filename: (req, file, cb) => {
+          const fileExtension = path.extname(file.originalname); // get file extension
+          const fileName = `hotel ${Date.now()}${fileExtension}`; // create a unique file name
+          cb(null, fileName); // callback with the unique file name
+        },
+      }), */
+      storage: memoryStorage(),
+    }),
+  )
+  async createHotel(
+    @Body() dto: hotelDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    const upoadedImageLink =
+      await this.cloudinaryService.uploadFileToCloudinary(file);
+    return this.hotelService.createHotel(dto, upoadedImageLink.secure_url);
   }
 
   // GET all hotels

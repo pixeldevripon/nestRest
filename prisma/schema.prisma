@@ -21,15 +21,16 @@ updatedAt DateTime @updatedAt
 model Hotel{
 id String @id @default(auto()) @map("_id") @db.ObjectId
 name String
+image String
 description String
 createdAt DateTime @default(now())
 updatedAt DateTime @updatedAt
 }
 
-model Bookmark{
+model Bookmark{ 
 id String @id @default(auto()) @map("_id") @db.ObjectId
 userId String
 hotelId String
 createdAt DateTime @default(now())
-updatedAt DateTime @updatedAt
+updatedAt DateTime @updatedAt  
 }
